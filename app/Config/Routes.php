@@ -22,5 +22,5 @@ $routes->group('api', function ($routes) {
         $routes->post('customers', 'Api\CustomerController::create'); // ✅ IMPORTANT
         $routes->put('customers/(:num)', 'Api\CustomerController::update/$1');
         $routes->delete('customers/(:num)', 'Api\CustomerController::delete/$1');
-8   });
+    });
 });
