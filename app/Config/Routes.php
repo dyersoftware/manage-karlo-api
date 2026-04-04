@@ -9,10 +9,7 @@ $routes->get('/', 'Home::index');
 $routes->get('test', 'Api\TestController::index');
 
 $routes->group('api', function ($routes) {
-    $routes->post('register', 'Api\AuthController::register');
-    $routes->post('login', 'Api\AuthController::login');
-    $routes->post('refresh', 'Api\AuthController::refresh');
-    $routes->post('logout', 'Api\AuthController::logout');
+
 
     $routes->group('', ['filter' => 'jwt'], function ($routes) {
 
@@ -24,3 +21,5 @@ $routes->group('api', function ($routes) {
         $routes->delete('customers/(:num)', 'Api\CustomerController::delete/$1');
     });
 });
+
+require APPPATH . 'Modules/Auth/Routes/auth.php';
