@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace App\Modules\Customers\Models;
 
 use CodeIgniter\Model;
 
@@ -16,7 +16,8 @@ class CustomerModel extends Model
         'name',
         'email',
         'phone',
-        'address'
+        'address',
+        'admin_user_id'
     ];
 
 

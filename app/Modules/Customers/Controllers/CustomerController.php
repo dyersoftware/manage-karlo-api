@@ -1,24 +1,26 @@
 <?php
 
-namespace App\Controllers\Api;
+namespace App\Modules\Customers\Controllers;
 
 use App\Controllers\BaseController;
-use App\Models\CustomerModel;
+use App\Modules\Customers\Services\CustomerService;
 
 class CustomerController extends BaseController
 {
-    protected $model;
+
+    protected $service;
 
     public function __construct()
     {
-        $this->model = new CustomerModel();
+        $this->service = new CustomerService();
     }
+
 
     // 📄 Get all customers
     public function index()
     {
         try {
-            $data = $this->model->findAll();
+            $data = $this->service->getAll();
 
             return $this->response->setJSON([
                 'status' => true,
@@ -29,25 +31,23 @@ class CustomerController extends BaseController
             return $this->serverError($e);
         }
     }
-
     // 📄 Get single customer
     public function show($id)
     {
         try {
-            if (!is_numeric($id)) {
-                return $this->failValidation('Invalid customer ID');
-            }
+            $result = $this->service->getById($id);
 
-            $customer = $this->model->find($id);
-
-            if (!$customer) {
-                return $this->failNotFound('Customer not found');
+            if (isset($result['error'])) {
+                return $this->response->setStatusCode($result['code'])->setJSON([
+                    'status' => false,
+                    'message' => $result['error']
+                ]);
             }
 
             return $this->response->setJSON([
                 'status' => true,
                 'message' => 'Customer fetched successfully',
-                'data' => $customer
+                'data' => $result
             ]);
         } catch (\Exception $e) {
             return $this->serverError($e);
@@ -60,7 +60,6 @@ class CustomerController extends BaseController
         try {
             $data = $this->request->getJSON(true);
 
-            // ✅ Validation
             $rules = [
                 'name'  => 'required|min_length[2]|max_length[100]',
                 'email' => 'required|valid_email|is_unique[customers.email]',
@@ -71,7 +70,7 @@ class CustomerController extends BaseController
                 return $this->failValidation($this->validator->getErrors());
             }
 
-            $this->model->insert($data);
+            $this->service->create($data);
 
             return $this->response->setJSON([
                 'status' => true,
@@ -86,23 +85,16 @@ class CustomerController extends BaseController
     public function update($id)
     {
         try {
-            if (!is_numeric($id)) {
-                return $this->failValidation('Invalid customer ID');
-            }
-
-            $customer = $this->model->find($id);
-
-            if (!$customer) {
-                return $this->failNotFound('Customer not found');
-            }
-
             $data = $this->request->getJSON(true);
 
-            if (empty($data)) {
-                return $this->failValidation('No data provided for update');
-            }
+            $result = $this->service->update($id, $data);
 
-            $this->model->update($id, $data);
+            if (isset($result['error'])) {
+                return $this->response->setStatusCode($result['code'])->setJSON([
+                    'status' => false,
+                    'message' => $result['error']
+                ]);
+            }
 
             return $this->response->setJSON([
                 'status' => true,
@@ -117,17 +109,14 @@ class CustomerController extends BaseController
     public function delete($id)
     {
         try {
-            if (!is_numeric($id)) {
-                return $this->failValidation('Invalid customer ID');
+            $result = $this->service->delete($id);
+
+            if (isset($result['error'])) {
+                return $this->response->setStatusCode($result['code'])->setJSON([
+                    'status' => false,
+                    'message' => $result['error']
+                ]);
             }
-
-            $customer = $this->model->find($id);
-
-            if (!$customer) {
-                return $this->failNotFound('Customer not found');
-            }
-
-            $this->model->delete($id);
 
             return $this->response->setJSON([
                 'status' => true,
@@ -151,13 +140,7 @@ class CustomerController extends BaseController
         ]);
     }
 
-    private function failNotFound($message)
-    {
-        return $this->response->setStatusCode(404)->setJSON([
-            'status' => false,
-            'message' => $message
-        ]);
-    }
+
 
     private function serverError($e)
     {
