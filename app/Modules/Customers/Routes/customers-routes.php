@@ -11,9 +11,9 @@ use CodeIgniter\Router\RouteCollection;
 
 $routes->group('api/customers', ['filter' => 'jwt'], function ($routes) {
 
-    $routes->get('/', '\App\Modules\Customers\Controllers\CustomerController::index');
-    $routes->get('(:num)', '\App\Modules\Customers\Controllers\CustomerController::show/$1');
-    $routes->post('/', '\App\Modules\Customers\Controllers\CustomerController::create');
-    $routes->put('(:num)', '\App\Modules\Customers\Controllers\CustomerController::update/$1');
-    $routes->delete('(:num)', '\App\Modules\Customers\Controllers\CustomerController::delete/$1');
+    $routes->get('/', '\App\Modules\Customers\Controllers\CustomersController::index');
+    $routes->get('(:num)', '\App\Modules\Customers\Controllers\CustomersController::show/$1');
+    $routes->post('/', '\App\Modules\Customers\Controllers\CustomersController::create');
+    $routes->put('(:num)', '\App\Modules\Customers\Controllers\CustomersController::update/$1');
+    $routes->delete('(:num)', '\App\Modules\Customers\Controllers\CustomersController::delete/$1');
 });

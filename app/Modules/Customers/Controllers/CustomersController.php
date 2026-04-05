@@ -3,16 +3,16 @@
 namespace App\Modules\Customers\Controllers;
 
 use App\Controllers\BaseController;
-use App\Modules\Customers\Services\CustomerService;
+use App\Modules\Customers\Services\CustomersService;
 
-class CustomerController extends BaseController
+class CustomersController extends BaseController
 {
 
     protected $service;
 
     public function __construct()
     {
-        $this->service = new CustomerService();
+        $this->service = new CustomersService();
     }
 
 

@@ -16,8 +16,7 @@ class CustomerModel extends Model
         'name',
         'email',
         'phone',
-        'address',
-        'admin_user_id'
+        'address'
     ];
 
 

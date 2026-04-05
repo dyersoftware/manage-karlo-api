@@ -4,7 +4,7 @@ namespace App\Modules\Customers\Services;
 
 use App\Modules\Customers\Models\CustomerModel;
 
-class CustomerService
+class CustomersService
 {
     protected $model;
 
