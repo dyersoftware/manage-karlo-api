@@ -20,6 +20,10 @@ class CustomersController extends BaseController
     public function index()
     {
         try {
+
+
+
+
             $data = $this->service->getAll();
 
             return $this->response->setJSON([

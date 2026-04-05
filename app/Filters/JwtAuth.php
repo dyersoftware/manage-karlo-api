@@ -58,7 +58,7 @@ class JwtAuth implements FilterInterface
         }
 
         // ✅ Attach user data to request (VERY USEFUL)
-        $request->user = $decoded->data;
+        service('request')->user = $decoded->data;
     }
 
     /**
