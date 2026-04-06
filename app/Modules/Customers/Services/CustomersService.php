@@ -3,15 +3,18 @@
 namespace App\Modules\Customers\Services;
 
 use App\Modules\Customers\Models\CustomerModel;
+use App\Modules\Customers\Models\UserCustomerModel;
 
 class CustomersService
 {
-    protected $model;
+    protected $customerModel;
+    protected $usersCustomersModel;
     protected $validation;
 
     public function __construct()
     {
-        $this->model = new CustomerModel();
+        $this->customerModel = new CustomerModel();
+        $this->usersCustomersModel = new UserCustomerModel();
         $this->validation = service('validation');
     }
 
@@ -22,7 +25,7 @@ class CustomersService
         if (!$user) {
             return ['error' => 'Unauthorized', 'code' => 401];
         }
-        return $this->model
+        return $this->customerModel
             ->where('admin_user_id', $user->id)
             ->findAll();
     }
@@ -39,7 +42,7 @@ class CustomersService
             return ['error' => 'Invalid customer ID', 'code' => 422];
         }
 
-        $customer = $this->model->find($id);
+        $customer = $this->customerModel->find($id);
 
         if (!$customer || $customer['admin_user_id'] != $user->id) {
             return ['error' => 'Customer not found', 'code' => 404];
@@ -71,7 +74,7 @@ class CustomersService
 
         $data['admin_user_id'] = $user->id;
         try {
-            $id = $this->model->insert($data);
+            $id = $this->customerModel->insert($data);
             return ['success' => true, 'id' => $id];
         } catch (\Exception $e) {
             log_message('error', 'Customer creation failed: ' . $e->getMessage());
@@ -91,7 +94,7 @@ class CustomersService
             return ['error' => 'Invalid customer ID', 'code' => 422];
         }
 
-        $customer = $this->model->find($id);
+        $customer = $this->customerModel->find($id);
 
         if (!$customer || $customer['admin_user_id'] != $user->id) {
             return ['error' => 'Customer not found', 'code' => 404];
@@ -111,7 +114,7 @@ class CustomersService
         }
 
         try {
-            $this->model->update($id, $data);
+            $this->customerModel->update($id, $data);
             return ['success' => true];
         } catch (\Exception $e) {
             log_message('error', 'Customer update failed: ' . $e->getMessage());
@@ -131,18 +134,115 @@ class CustomersService
             return ['error' => 'Invalid customer ID', 'code' => 422];
         }
 
-        $customer = $this->model->find($id);
+        $customer = $this->customerModel->find($id);
 
         if (!$customer || $customer['admin_user_id'] != $user->id) {
             return ['error' => 'Customer not found', 'code' => 404];
         }
 
         try {
-            $this->model->delete($id);
+            $this->customerModel->delete($id);
             return ['success' => true];
         } catch (\Exception $e) {
             log_message('error', 'Customer deletion failed: ' . $e->getMessage());
             return ['error' => 'Failed to delete customer', 'code' => 500];
         }
+    }
+
+    public function assignCustomerToUser($customerId)
+    {
+        $user = service('request')->user;
+
+        if (!$user) {
+            return ['error' => 'Unauthorized', 'code' => 401];
+        }
+
+        if (empty($customerId)) {
+            return ['error' => 'customer_id required', 'code' => 422];
+        }
+
+
+
+        try {
+            // check duplicate
+            $exists = $this->usersCustomersModel->where([
+                'user_id' => $user->id,
+                'customer_id' => $customerId
+            ])->countAllResults();
+
+            if ($exists) {
+                return ['error' => 'Already assigned', 'code' => 409];
+            }
+
+            $result = $this->getById($customerId);
+
+            if (isset($result['error'])) {
+                return [
+                    'error' => $result['error'],
+                    'code' => $result['code']
+                ];
+            }
+
+            $this->usersCustomersModel->table('users_customers')->insert([
+                'user_id' => $user->id,
+                'customer_id' => $customerId,
+                'created_at' => date('Y-m-d H:i:s')
+            ]);
+
+            return ['success' => true];
+        } catch (\Exception $e) {
+            log_message('error', 'Assign failed: ' . $e->getMessage());
+            return ['error' => 'Failed to assign customer', 'code' => 500];
+        }
+    }
+
+    public function unassignCustomerFromUser($customerId)
+    {
+        $user = service('request')->user;
+
+        if (!$user) {
+            return ['error' => 'Unauthorized', 'code' => 401];
+        }
+
+        if (empty($customerId)) {
+            return ['error' => 'customer_id required', 'code' => 422];
+        }
+
+        try {
+            // check if relation exists
+            $exists = $this->usersCustomersModel->where([
+                'user_id' => $user->id,
+                'customer_id' => $customerId
+            ])->first();
+
+            if (!$exists) {
+                return ['error' => 'Assignment not found', 'code' => 404];
+            }
+
+            // delete relation
+            $this->usersCustomersModel->where([
+                'user_id' => $user->id,
+                'customer_id' => $customerId
+            ])->delete();
+
+            return ['success' => true];
+        } catch (\Exception $e) {
+            log_message('error', 'Unassign failed: ' . $e->getMessage());
+            return ['error' => 'Failed to unassign customer', 'code' => 500];
+        }
+    }
+    public function getAssignedCustomers()
+    {
+        $user = service('request')->user;
+
+        if (!$user) {
+            return ['error' => 'Unauthorized', 'code' => 401];
+        }
+
+        return $this->customerModel
+            ->select('customers.*')
+            ->join('users_customers', 'users_customers.customer_id = customers.id')
+            ->where('users_customers.user_id', $user->id)
+            ->findAll();
     }
 }

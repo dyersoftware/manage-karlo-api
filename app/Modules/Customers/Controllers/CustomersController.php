@@ -131,6 +131,79 @@ class CustomersController extends BaseController
         }
     }
 
+
+    public function assignCustomer()
+    {
+        try {
+            $data = $this->request->getJSON(true);
+
+            $customerId = $data['customer_id'] ?? null;
+
+            $result = $this->service->assignCustomerToUser($customerId);
+
+            if (isset($result['error'])) {
+                return $this->response->setStatusCode($result['code'])->setJSON([
+                    'status' => false,
+                    'message' => $result['error']
+                ]);
+            }
+
+            return $this->response->setJSON([
+                'status' => true,
+                'message' => 'Customer assigned successfully'
+            ]);
+        } catch (\Exception $e) {
+            return $this->serverError($e);
+        }
+    }
+
+    public function unassignCustomer()
+    {
+        try {
+            $data = $this->request->getJSON(true);
+
+            $customerId = $data['customer_id'] ?? null;
+
+            $result = $this->service->unassignCustomerFromUser($customerId);
+
+            if (isset($result['error'])) {
+                return $this->response->setStatusCode($result['code'])->setJSON([
+                    'status' => false,
+                    'message' => $result['error']
+                ]);
+            }
+
+            return $this->response->setJSON([
+                'status' => true,
+                'message' => 'Customer unassigned successfully'
+            ]);
+        } catch (\Exception $e) {
+            return $this->serverError($e);
+        }
+    }
+    public function assignedCustomers()
+    {
+        try {
+
+            $data = $this->service->getAssignedCustomers();
+
+            if (isset($data['error'])) {
+                return $this->response->setStatusCode($data['code'])->setJSON([
+                    'status' => false,
+                    'message' => $data['error']
+                ]);
+            }
+
+            return $this->response->setJSON([
+                'status' => true,
+                'message' => 'Assigned customers fetched successfully',
+                'data' => $data
+            ]);
+        } catch (\Exception $e) {
+            return $this->serverError($e);
+        }
+    }
+
     // ==============================
     // 🔥 COMMON RESPONSE METHODS
     // ==============================
