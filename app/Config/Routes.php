@@ -5,6 +5,11 @@ use CodeIgniter\Router\RouteCollection;
 /**
  * @var RouteCollection $routes
  */
+
+$routes->options('(:any)', function () {
+    return response()->setStatusCode(200);
+});
+
 $routes->get('/', 'Home::index');
 $routes->get('test', 'Api\TestController::index');
 
