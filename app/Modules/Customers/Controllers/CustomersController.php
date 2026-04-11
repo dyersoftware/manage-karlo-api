@@ -74,11 +74,23 @@ class CustomersController extends BaseController
                 return $this->failValidation($this->validator->getErrors());
             }
 
-            $this->service->create($data);
+            // $this->service->create($data);
+            // 👉 service call
+            $result = $this->service->createAndAssign($data);
+
+            if (isset($result['error'])) {
+                return $this->response->setStatusCode($result['code'])->setJSON([
+                    'status' => false,
+                    'message' => $result['error']
+                ]);
+            }
 
             return $this->response->setJSON([
                 'status' => true,
-                'message' => 'Customer created successfully'
+                'message' => 'Customer created & assigned successfully',
+                'data' => [
+                    'id' => $result['id']
+                ]
             ]);
         } catch (\Exception $e) {
             return $this->serverError($e);

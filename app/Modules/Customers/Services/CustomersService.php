@@ -245,4 +245,60 @@ class CustomersService
             ->where('users_customers.user_id', $user->id)
             ->findAll();
     }
+
+
+    public function createAndAssign($data)
+    {
+        $user = service('request')->user;
+
+        if (!$user) {
+            return ['error' => 'Unauthorized', 'code' => 401];
+        }
+
+        if (empty($data)) {
+            return ['error' => 'No data provided', 'code' => 422];
+        }
+
+
+        try {
+            // 1️⃣ Create Customer
+            $data['admin_user_id'] = $user->id;
+
+            $customerId = $this->customerModel->insert($data);
+
+            if (!$customerId) {
+                throw new \Exception('Customer creation failed');
+            }
+
+            // 2️⃣ Check already assigned (optional safety)
+            $exists = $this->usersCustomersModel->where([
+                'user_id' => $user->id,
+                'customer_id' => $customerId
+            ])->countAllResults();
+
+            if (!$exists) {
+                // 3️⃣ Assign
+                $this->usersCustomersModel->insert([
+                    'user_id' => $user->id,
+                    'customer_id' => $customerId,
+                    'created_at' => date('Y-m-d H:i:s')
+                ]);
+            }
+
+
+            return [
+                'success' => true,
+                'id' => $customerId
+            ];
+        } catch (\Exception $e) {
+
+
+            log_message('error', 'Create & Assign failed: ' . $e->getMessage());
+
+            return [
+                'error' => 'Failed to create & assign customer',
+                'code' => 500
+            ];
+        }
+    }
 }
