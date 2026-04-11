@@ -26,7 +26,7 @@ class CustomersService
             return ['error' => 'Unauthorized', 'code' => 401];
         }
         return $this->customerModel
-            ->where('admin_user_id', $user->id)
+            ->where('user_id', $user->id)
             ->findAll();
     }
 
@@ -44,7 +44,7 @@ class CustomersService
 
         $customer = $this->customerModel->find($id);
 
-        if (!$customer || $customer['admin_user_id'] != $user->id) {
+        if (!$customer || $customer['user_id'] != $user->id) {
             return ['error' => 'Customer not found', 'code' => 404];
         }
 
@@ -72,7 +72,7 @@ class CustomersService
             return ['error' => $this->validation->getErrors(), 'code' => 422];
         }
 
-        $data['admin_user_id'] = $user->id;
+        $data['user_id'] = $user->id;
         try {
             $id = $this->customerModel->insert($data);
             return ['success' => true, 'id' => $id];
@@ -96,7 +96,7 @@ class CustomersService
 
         $customer = $this->customerModel->find($id);
 
-        if (!$customer || $customer['admin_user_id'] != $user->id) {
+        if (!$customer || $customer['user_id'] != $user->id) {
             return ['error' => 'Customer not found', 'code' => 404];
         }
 
@@ -136,7 +136,7 @@ class CustomersService
 
         $customer = $this->customerModel->find($id);
 
-        if (!$customer || $customer['admin_user_id'] != $user->id) {
+        if (!$customer || $customer['user_id'] != $user->id) {
             return ['error' => 'Customer not found', 'code' => 404];
         }
 
@@ -262,7 +262,7 @@ class CustomersService
 
         try {
             // 1️⃣ Create Customer
-            $data['admin_user_id'] = $user->id;
+            $data['user_id'] = $user->id;
 
             $customerId = $this->customerModel->insert($data);
 
