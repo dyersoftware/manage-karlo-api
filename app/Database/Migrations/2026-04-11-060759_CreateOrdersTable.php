@@ -18,7 +18,6 @@ class CreateOrdersTable extends Migration
             'customer_id' => [
                 'type'     => 'INT',
                 'unsigned' => true,
-                'null' => true,
             ],
 
             'user_id' => [
@@ -78,7 +77,7 @@ class CreateOrdersTable extends Migration
         $this->forge->addKey('user_id');
 
         // foreign keys
-        $this->forge->addForeignKey('customer_id', 'customers', 'id', 'CASCADE', 'CASCADE', 'SET NULL');
+        $this->forge->addForeignKey('customer_id', 'customers', 'id', 'CASCADE', 'CASCADE',);
         $this->forge->addForeignKey('user_id', 'users', 'id', 'CASCADE', 'CASCADE');
 
         $this->forge->createTable('orders');

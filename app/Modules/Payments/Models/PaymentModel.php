@@ -39,7 +39,7 @@ class PaymentModel extends Model
     // Validation
     protected $validationRules = [
         'order_id' => 'required|integer',
-        'customer_id' => 'permit_empty|integer',
+        'customer_id' => 'required|integer',
         'user_id' => 'required|integer',
         'amount' => 'required|decimal|greater_than[0]',
         'payment_method' => 'required|string|max_length[50]',
@@ -49,13 +49,29 @@ class PaymentModel extends Model
     protected $validationMessages = [
         'order_id' => [
             'required' => 'Order ID is required',
+            'integer'  => 'Order ID must be a number',
         ],
         'customer_id' => [
-            'integer' => 'Customer ID must be a number',
+            'required' => 'Customer ID is required',
+            'integer'  => 'Customer ID must be a number',
+        ],
+        'user_id' => [
+            'required' => 'User ID is required',
+            'integer'  => 'User ID must be a number',
         ],
         'amount' => [
             'required' => 'Amount is required',
-            'decimal'  => 'Amount must be a valid number',
+            'decimal'  => 'Amount must be a valid decimal number',
+            'greater_than' => 'Amount must be greater than zero',
+        ],
+        'payment_method' => [
+            'required' => 'Payment method is required',
+            'string'   => 'Payment method must be a string',
+            'max_length' => 'Payment method cannot exceed 50 characters',
+        ],
+        'status' => [
+            'required' => 'Status is required',
+            'in_list'  => 'Status must be one of: pending, paid, failed',
         ],
     ];
 

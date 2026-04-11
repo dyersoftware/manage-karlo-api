@@ -32,8 +32,20 @@ class UserCustomerModel extends Model
     protected $deletedField  = 'deleted_at';
 
     // Validation
-    protected $validationRules      = [];
-    protected $validationMessages   = [];
+    protected $validationRules      = [
+        'user_id' => 'required|integer',
+        'customer_id' => 'required|integer',
+    ];
+    protected $validationMessages   = [
+        'user_id' => [
+            'required' => 'User ID is required',
+            'integer'  => 'User ID must be a number',
+        ],
+        'customer_id' => [
+            'required' => 'Customer ID is required',
+            'integer'  => 'Customer ID must be a number',
+        ],
+    ];
     protected $skipValidation       = false;
     protected $cleanValidationRules = true;
 

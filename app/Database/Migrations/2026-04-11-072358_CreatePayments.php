@@ -26,7 +26,7 @@ class CreatePayments extends Migration
                 'type'       => 'INT',
                 'constraint' => 10,
                 'unsigned'   => true,
-                'null'       => true,
+
             ],
 
             'user_id' => [
@@ -80,7 +80,7 @@ class CreatePayments extends Migration
 
         // Foreign Keys
         $this->forge->addForeignKey('order_id', 'orders', 'id', 'CASCADE', 'CASCADE');
-        $this->forge->addForeignKey('customer_id', 'customers', 'id', 'CASCADE', 'CASCADE', 'SET NULL');
+        $this->forge->addForeignKey('customer_id', 'customers', 'id', 'CASCADE', 'CASCADE',);
         $this->forge->addForeignKey('user_id', 'users', 'id', 'CASCADE', 'CASCADE');
 
         // Create table

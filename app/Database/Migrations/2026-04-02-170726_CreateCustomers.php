@@ -11,6 +11,8 @@ class CreateCustomers extends Migration
         $this->forge->addField([
             'id' => [
                 'type' => 'INT',
+                'constraint' => 10,
+                'unsigned' => true, // ✅ IMPORTANT FIX
                 'auto_increment' => true,
             ],
             'name' => [
@@ -30,6 +32,11 @@ class CreateCustomers extends Migration
                 'type' => 'TEXT',
                 'null' => true,
             ],
+            'user_id' => [
+                'type'     => 'INT',
+                'constraint' => 10,
+                'unsigned' => true,
+            ],
             'created_at' => [
                 'type' => 'DATETIME',
                 'null' => true,
@@ -41,11 +48,15 @@ class CreateCustomers extends Migration
         ]);
 
         $this->forge->addKey('id', true);
-        $this->forge->createTable('customers');
+        $this->forge->addKey('user_id');
+
+        $this->forge->addForeignKey('user_id', 'users', 'id', 'CASCADE', 'CASCADE');
+
+        $this->forge->createTable('customers', true, ['ENGINE' => 'InnoDB']);
     }
 
     public function down()
     {
-        //
+        $this->forge->dropTable('customers', true);
     }
 }

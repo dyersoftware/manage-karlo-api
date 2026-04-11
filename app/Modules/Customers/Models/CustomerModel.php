@@ -17,7 +17,7 @@ class CustomerModel extends Model
         'email',
         'phone',
         'address',
-        'admin_user_id'
+        'user_id',
     ];
 
 
@@ -35,8 +35,37 @@ class CustomerModel extends Model
     protected $deletedField  = 'deleted_at';
 
     // Validation
-    protected $validationRules      = [];
-    protected $validationMessages   = [];
+    protected $validationRules      = [
+        'name'  => 'required|string|max_length[100]',
+        'email' => 'required|valid_email|max_length[150]',
+        'phone' => 'required|string|max_length[20]',
+        'address' => 'permit_empty|string',
+        'user_id' => 'required|integer',
+    ];
+    protected $validationMessages   = [
+        'name' => [
+            'required' => 'Name is required',
+            'string'   => 'Name must be a string',
+            'max_length' => 'Name cannot exceed 100 characters',
+        ],
+        'email' => [
+            'required' => 'Email is required',
+            'valid_email' => 'Email must be a valid email address',
+            'max_length' => 'Email cannot exceed 150 characters',
+        ],
+        'phone' => [
+            'required' => 'Phone number is required',
+            'string'   => 'Phone must be a string',
+            'max_length' => 'Phone cannot exceed 20 characters',
+        ],
+        'address' => [
+            'string'   => 'Address must be a string',
+        ],
+        'user_id' => [
+            'required' => 'User ID is required',
+            'integer'  => 'User ID must be a number',
+        ],
+    ];
     protected $skipValidation       = false;
     protected $cleanValidationRules = true;
 

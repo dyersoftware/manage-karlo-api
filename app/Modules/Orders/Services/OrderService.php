@@ -28,13 +28,14 @@ class OrderService
 
         // ✅ Validation
         $rules = [
-            'customer_id'  => 'permit_empty|integer',
+            'customer_id'  => 'required|integer',
             'total_amount' => 'required|decimal',
             'status'       => 'permit_empty|in_list[pending,processing,completed,cancelled]',
             'notes'        => 'permit_empty|string'
         ];
 
         $validation = service('validation');
+
 
         if (!$validation->setRules($rules)->run($data)) {
             return [

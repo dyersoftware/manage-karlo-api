@@ -35,22 +35,19 @@ class CreateUsersCustomers extends Migration
             ],
         ]);
 
-        // Primary Key
         $this->forge->addKey('id', true);
 
-        // Unique constraint (no duplicate assignments)
+        // prevent duplicate mapping
         $this->forge->addUniqueKey(['user_id', 'customer_id']);
 
-        // Foreign Keys
         $this->forge->addForeignKey('user_id', 'users', 'id', 'CASCADE', 'CASCADE');
         $this->forge->addForeignKey('customer_id', 'customers', 'id', 'CASCADE', 'CASCADE');
 
-        // Create Table
-        $this->forge->createTable('users_customers');
+        $this->forge->createTable('users_customers', true, ['ENGINE' => 'InnoDB']);
     }
 
     public function down()
     {
-        $this->forge->dropTable('users_customers');
+        $this->forge->dropTable('users_customers', true);
     }
 }
