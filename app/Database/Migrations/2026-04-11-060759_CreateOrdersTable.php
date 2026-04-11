@@ -43,6 +43,11 @@ class CreateOrdersTable extends Migration
                 'constraint' => ['full', 'partial'],
                 'default'    => 'full',
             ],
+            'payment_status' => [
+                'type'       => 'ENUM',
+                'constraint' => ['unpaid', 'partial', 'paid'],
+                'default'    => 'unpaid',
+            ],
 
             'status' => [
                 'type'       => 'ENUM',

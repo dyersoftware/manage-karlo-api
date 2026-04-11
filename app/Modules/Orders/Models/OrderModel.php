@@ -19,6 +19,7 @@ class OrderModel extends Model
         'order_number',
         'total_amount',
         'payment_type',
+        'payment_status',
         'status',
         'notes',
     ];
