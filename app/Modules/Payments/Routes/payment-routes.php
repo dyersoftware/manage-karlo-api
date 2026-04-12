@@ -18,4 +18,6 @@ $routes->group('api/payments', ['filter' => 'jwt'], function ($routes) {
     $routes->delete('(:num)', '\App\Modules\Payments\Controllers\PaymentController::delete/$1');
     //get by user with optional customer_id filter
     $routes->get('/', '\App\Modules\Payments\Controllers\PaymentController::index');
+    //get payment by ID
+    $routes->get('(:num)', '\App\Modules\Payments\Controllers\PaymentController::show/$1');
 });

@@ -187,4 +187,30 @@ class PaymentService
             'data' => $builder->findAll()
         ];
     }
+
+    public function getById($id)
+    {
+        $user = service('request')->user;
+
+        if (!$user) {
+            return ['error' => 'Unauthorized', 'code' => 401];
+        }
+
+        $order = $this->paymentModel
+            ->select('payments.*, customers.name as customer_name, orders.order_number')
+            ->join('orders', 'orders.id = payments.order_id', 'left')
+            ->join('customers', 'customers.id = payments.customer_id', 'left')
+            ->where('payments.id', $id)
+            ->where('payments.user_id', $user->id)
+            ->first();
+
+        if (!$order) {
+            return ['error' => 'Payment not found', 'code' => 404];
+        }
+
+        return [
+            'success' => true,
+            'data' => $order
+        ];
+    }
 }

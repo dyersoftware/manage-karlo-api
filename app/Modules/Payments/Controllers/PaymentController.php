@@ -130,4 +130,31 @@ class PaymentController extends BaseController
             ]);
         }
     }
+    // ✅ Get Single Order
+    public function show($id)
+    {
+        try {
+            $result = $this->paymentService->getById($id);
+
+            if (isset($result['error'])) {
+                return $this->response->setStatusCode($result['code'])
+                    ->setJSON([
+                        'status' => false,
+                        'message' => $result['error']
+                    ]);
+            }
+
+            return $this->response->setJSON([
+                'status' => true,
+                'data' => $result['data']
+            ]);
+        } catch (\Throwable $e) {
+            log_message('error', 'Payment detail error: ' . $e->getMessage());
+
+            return $this->response->setStatusCode(500)->setJSON([
+                'status' => false,
+                'message' => 'Failed to fetch payment'
+            ]);
+        }
+    }
 }
