@@ -21,9 +21,6 @@ class CustomersController extends BaseController
     {
         try {
 
-
-
-
             $data = $this->service->getAll();
 
             return $this->response->setJSON([

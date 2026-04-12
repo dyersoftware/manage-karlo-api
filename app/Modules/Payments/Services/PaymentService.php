@@ -28,7 +28,6 @@ class PaymentService
         if (empty($data['order_id'])) {
             return ['error' => 'Order ID is required', 'code' => 422];
         }
-
         // ✅ Check order belongs to user
         $order = $this->orderModel
             ->where('id', $data['order_id'])
@@ -38,9 +37,19 @@ class PaymentService
         if (!$order) {
             return ['error' => 'Order not found', 'code' => 404];
         }
+        if (empty($order['id'])) {
+            return ['error' => 'Order ID not found', 'code' => 422];
+        }
+        if (empty($order['customer_id'])) {
+            return ['error' => 'Customer ID not found', 'code' => 422];
+        }
+
+
 
         // ✅ Validation
         $rules = [
+            'order_id' => 'required|integer',
+            'customer_id' => 'permit_empty|integer',
             'amount' => 'required|decimal|greater_than[0]',
             'payment_method' => 'required|string|max_length[50]',
             'status' => 'permit_empty|in_list[pending,paid,failed]',
@@ -57,7 +66,7 @@ class PaymentService
 
         // ✅ Inject required fields
         $data['user_id']     = $user->id;
-        $data['customer_id'] = $order['customer_id'] ?? null;
+        $data['customer_id'] = $order['customer_id'];
 
         try {
             $id = $this->paymentModel->insert($data);

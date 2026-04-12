@@ -44,7 +44,7 @@ class OrderModel extends Model
         'order_number' => 'required|string|max_length[50]',
         'total_amount' => 'required|decimal',
         'payment_type' => 'required|in_list[full,partial]',
-        'payment_status' => 'required|in_list[unpaid,partial,paid]',
+        'payment_status' => 'permit_empty|in_list[unpaid,partial,paid]',
         'status'       => 'required|in_list[pending,processing,completed,cancelled]',
         'notes'        => 'permit_empty|string'
     ];
@@ -71,7 +71,6 @@ class OrderModel extends Model
             'in_list'  => 'Payment type must be either full or partial',
         ],
         'payment_status' => [
-            'required' => 'Payment status is required',
             'in_list'  => 'Payment status must be unpaid, partial, or paid',
         ],
         'status' => [

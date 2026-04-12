@@ -43,7 +43,7 @@ class PaymentModel extends Model
         'user_id' => 'required|integer',
         'amount' => 'required|decimal|greater_than[0]',
         'payment_method' => 'required|string|max_length[50]',
-        'status' => 'required|in_list[pending,paid,failed]',
+        'status' => 'permit_empty|in_list[pending,paid,failed]',
     ];
 
     protected $validationMessages = [
@@ -52,7 +52,6 @@ class PaymentModel extends Model
             'integer'  => 'Order ID must be a number',
         ],
         'customer_id' => [
-            'required' => 'Customer ID is required',
             'integer'  => 'Customer ID must be a number',
         ],
         'user_id' => [
@@ -70,7 +69,6 @@ class PaymentModel extends Model
             'max_length' => 'Payment method cannot exceed 50 characters',
         ],
         'status' => [
-            'required' => 'Status is required',
             'in_list'  => 'Status must be one of: pending, paid, failed',
         ],
     ];

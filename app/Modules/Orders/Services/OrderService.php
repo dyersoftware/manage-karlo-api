@@ -2,15 +2,18 @@
 
 namespace App\Modules\Orders\Services;
 
+use App\Modules\Customers\Models\CustomerModel;
 use App\Modules\Orders\Models\OrderModel;
 
 class OrderService
 {
     protected $orderModel;
+    protected $customerModel;
 
     public function __construct()
     {
         $this->orderModel = new OrderModel();
+        $this->customerModel = new CustomerModel();
     }
 
     // ✅ Create Order (user_id from JWT)
@@ -29,8 +32,11 @@ class OrderService
         // ✅ Validation
         $rules = [
             'customer_id'  => 'required|integer',
+            'order_number' => 'permit_empty|string|max_length[50]',
             'total_amount' => 'required|decimal',
-            'status'       => 'permit_empty|in_list[pending,processing,completed,cancelled]',
+            'payment_type' => 'required|in_list[full,partial]',
+            'payment_status' => 'permit_empty|in_list[unpaid,partial,paid]',
+            'status'       => 'required|in_list[pending,processing,completed,cancelled]',
             'notes'        => 'permit_empty|string'
         ];
 
@@ -42,6 +48,15 @@ class OrderService
                 'error' => $validation->getErrors(),
                 'code'  => 422
             ];
+        }
+
+        $order = $this->customerModel
+            ->where('id', $data['customer_id'])
+            ->where('user_id', $user->id)
+            ->first();
+
+        if (!$order) {
+            return ['error' => 'Customer not found', 'code' => 404];
         }
 
         // ✅ Inject user_id from JWT
