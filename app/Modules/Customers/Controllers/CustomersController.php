@@ -63,8 +63,8 @@ class CustomersController extends BaseController
 
             $rules = [
                 'name'  => 'required|min_length[2]|max_length[100]',
-                'email' => 'required|valid_email|is_unique[customers.email]',
-                'phone' => 'permit_empty|min_length[10]|max_length[15]',
+                'email' => 'permit_empty|valid_email|is_unique[customers.email]',
+                'phone' => 'required|min_length[10]|max_length[15]|is_unique[customers.phone]',
             ];
 
             if (!$this->validate($rules)) {
@@ -207,6 +207,28 @@ class CustomersController extends BaseController
                 'status' => true,
                 'message' => 'Assigned customers fetched successfully',
                 'data' => $data
+            ]);
+        } catch (\Exception $e) {
+            return $this->serverError($e);
+        }
+    }
+
+    public function findCustomerByMobileNumber($mobileNumber)
+    {
+        try {
+            $result = $this->service->getByMobileNumber($mobileNumber);
+
+            if (isset($result['error'])) {
+                return $this->response->setStatusCode($result['code'])->setJSON([
+                    'status' => false,
+                    'message' => $result['error']
+                ]);
+            }
+
+            return $this->response->setJSON([
+                'status' => true,
+                'message' => 'Customer fetched successfully',
+                'data' => $result
             ]);
         } catch (\Exception $e) {
             return $this->serverError($e);

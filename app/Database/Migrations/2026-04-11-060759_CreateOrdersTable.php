@@ -36,12 +36,18 @@ class CreateOrdersTable extends Migration
                 'default'    => 0.00,
             ],
 
-            // ✅ NEW COLUMN
-            'payment_type' => [
-                'type'       => 'ENUM',
-                'constraint' => ['full', 'partial'],
-                'default'    => 'full',
+            'advance_amount' => [
+                'type'       => 'DECIMAL',
+                'constraint' => '10,2',
+                'default'    => 0.00,
             ],
+
+            'due_amount' => [
+                'type'       => 'DECIMAL',
+                'constraint' => '10,2',
+                'default'    => 0.00,
+            ],
+
             'payment_status' => [
                 'type'       => 'ENUM',
                 'constraint' => ['unpaid', 'partial', 'paid'],
@@ -50,8 +56,18 @@ class CreateOrdersTable extends Migration
 
             'status' => [
                 'type'       => 'ENUM',
-                'constraint' => ['pending', 'processing', 'completed', 'cancelled'],
+                'constraint' => ['pending', 'in_progress', 'ready', 'delivered', 'cancelled'],
                 'default'    => 'pending',
+            ],
+
+            'order_date' => [
+                'type' => 'DATETIME',
+                'null' => true,
+            ],
+
+            'delivery_date' => [
+                'type' => 'DATETIME',
+                'null' => true,
             ],
 
             'notes' => [
@@ -71,13 +87,12 @@ class CreateOrdersTable extends Migration
         ]);
 
         $this->forge->addKey('id', true);
+        $this->forge->addUniqueKey('order_number');
 
-        // indexes
         $this->forge->addKey('customer_id');
         $this->forge->addKey('user_id');
 
-        // foreign keys
-        $this->forge->addForeignKey('customer_id', 'customers', 'id', 'CASCADE', 'CASCADE',);
+        $this->forge->addForeignKey('customer_id', 'customers', 'id', 'CASCADE', 'CASCADE');
         $this->forge->addForeignKey('user_id', 'users', 'id', 'CASCADE', 'CASCADE');
 
         $this->forge->createTable('orders');

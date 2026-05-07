@@ -301,4 +301,25 @@ class CustomersService
             ];
         }
     }
+
+    // 📄 Get single getByMobileNumber
+    public function getByMobileNumber($mobileNumber)
+    {
+        $user = service('request')->user;
+        if (!$user) {
+            return ['error' => 'Unauthorized', 'code' => 401];
+        }
+
+        if (!is_numeric($mobileNumber)) {
+            return ['error' => 'Invalid mobile number', 'code' => 422];
+        }
+
+        $customer = $this->customerModel->where('phone', $mobileNumber)->first();
+
+        if (!$customer || $customer['user_id'] != $user->id) {
+            return ['error' => 'Customer not found', 'code' => 404];
+        }
+
+        return $customer;
+    }
 }

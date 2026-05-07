@@ -10,7 +10,6 @@ use CodeIgniter\Router\RouteCollection;
 
 
 $routes->group('api/customers', ['filter' => 'jwt'], function ($routes) {
-
     $routes->get('/', '\App\Modules\Customers\Controllers\CustomersController::index');
     $routes->get('(:num)', '\App\Modules\Customers\Controllers\CustomersController::show/$1');
     $routes->post('/', '\App\Modules\Customers\Controllers\CustomersController::create');
@@ -19,4 +18,5 @@ $routes->group('api/customers', ['filter' => 'jwt'], function ($routes) {
     $routes->post('assign', '\App\Modules\Customers\Controllers\CustomersController::assignCustomer');
     $routes->post('unassign', '\App\Modules\Customers\Controllers\CustomersController::unassignCustomer');
     $routes->get('assigned-customers', '\App\Modules\Customers\Controllers\CustomersController::assignedCustomers');
+    $routes->get('mobile/(:num)', '\App\Modules\Customers\Controllers\CustomersController::findCustomerByMobileNumber/$1');
 });
