@@ -17,3 +17,4 @@ require APPPATH . 'Modules/Auth/Routes/auth.php';
 require APPPATH . 'Modules/Customers/Routes/customers-routes.php';
 require APPPATH . 'Modules/Orders/Routes/orders-routes.php';
 require APPPATH . 'Modules/Payments/Routes/payment-routes.php';
+require APPPATH . 'Modules/OrdersItems/Routes/order-item-routes.php';
